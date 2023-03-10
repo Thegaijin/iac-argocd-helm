@@ -1,0 +1,25 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: tax-integrator-v2
+  namespace: argocd
+  # annotations:
+  #   notifications.argoproj.io/subscribe.on-sync-succeeded.teams: msteams
+spec:
+  project: default
+  source:
+    helm:
+      valueFiles:
+        - values.yaml
+    path: helm/tax-integrator-v2
+    repoURL: git@github.com:kumusoft/iac-k8s-argocd.git # repo with the application yaml files
+    targetRevision: HEAD
+  destination:
+    server: https://kubernetes.default.svc # same cluster as argocd
+    namespace: tax-integrator-v2
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+    automated:
+      prune: true
+      selfHeal: false

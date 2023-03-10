@@ -1,0 +1,22 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: tax-integrator-v2
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: <url for repo to keep track of>
+    targetRevision: HEAD
+    path: <directory in repo to track> #argocd looks for changes in these yaml files
+    directory:
+      recurse: true
+  destination:
+    server: https://kubernetes.default.svc # cluster where argocd is installed
+    namespace: tax-integrator-v2
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
+    automated: # tells argocd to trigger the changes when they are pushed
+      prune: false # if yaml file is delete, delete component from cluster when set to true
+      selfHeal: false # overwrite manually made changes to the cluster when set to true
